@@ -1,19 +1,21 @@
-import { CONTACT_TYPE } from "../constans/contacts.js";
+import { CONTACT_TYPE } from '../constans/contacts.js';
 
 const parseContactType = (string) => {
-    if(typeof string !== "string") return;
+  if (typeof string !== 'string') return;
 
-    if (CONTACT_TYPE.includes(string)) {
-        return string;
-    };
+  if (CONTACT_TYPE.includes(string)) {
+    return string;
+  }
 
-    return;
- };
+  return;
+};
 
 const parseIsFavourite = (value) => {
-    if (typeof value !== 'boolean') return;
+  if (typeof value !== 'string') return;
 
-    return value;
+  if (value.toLowerCase() === 'true') return true;
+
+  if (value.toLowerCase() === 'false') return false;
 };
 
 export const parseFilterParams = (query) => {
