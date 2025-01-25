@@ -1,13 +1,13 @@
-import ContactsCollection from "../db/models/contacts.js";
-import { SORT_ORDER } from "../constans/contacts.js";
-import { calcPaginationData } from "../utils/calcPaginationData.js";
+import ContactsCollection from '../db/models/contacts.js';
+import { SORT_ORDER } from '../constans/contacts.js';
+import { calcPaginationData } from '../utils/calcPaginationData.js';
 
 export const getAllContacts = async ({
-        page = 1,
-        perPage = 10,
-        sortBy = "_id",
-        sortOrder = SORT_ORDER.ASC,
-        filter = {},
+  page = 1,
+  perPage = 10,
+  sortBy = '_id',
+  sortOrder = SORT_ORDER.ASC,
+  filter = {},
 }) => {
   const limit = perPage;
   const skip = (page - 1) * limit;
@@ -19,9 +19,17 @@ export const getAllContacts = async ({
   if (filter.isFavourite) {
     contactsQuery.where('isFavourite').equals(filter.isFavourite);
   }
+  if (filter.userId) {
+    contactsQuery.where('userId').equals(filter.userId);
+  }
 
-  const totalItems = await ContactsCollection.find().merge(contactsQuery).countDocuments();
-  const data = await contactsQuery.skip(skip).limit(limit).sort({ [sortBy]: sortOrder });
+  const totalItems = await ContactsCollection.find()
+    .merge(contactsQuery)
+    .countDocuments();
+  const data = await contactsQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder });
 
   const paginationData = calcPaginationData({ totalItems, page, perPage });
 
@@ -41,13 +49,15 @@ export const addContact = async (contactData) => {
   return newContact;
 };
 
-export const updateContact = async (contactId,updateContactData,options = {},) => {
+export const updateContact = async (
+  contactId,
+  updateContactData,
+  options = {},
+) => {
   const result = await ContactsCollection.findOneAndUpdate(
     { _id: contactId },
     updateContactData,
-    { new: true,
-      includeResultMetadata: true,
-    },
+    { new: true, includeResultMetadata: true },
   );
 
   if (!result || !result.value) return null;
