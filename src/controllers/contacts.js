@@ -6,6 +6,9 @@ import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { sortByList } from '../db/models/contacts.js';
 import { saveFileToUploadsDir } from '../utils/saveFileToUploadsDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { deleteFileFromCloudinary } from '../utils/deleteFileFromCloudinary.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -45,9 +48,15 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
+  const cloudinaryEnable = getEnvVar('CLOUDINARY_ENABLE') === 'true';
   let photo;
+
   if (req.file) {
-    photo = await saveFileToUploadsDir(req.file);
+    if (cloudinaryEnable) {
+      photo = await saveFileToCloudinary(req.file);
+    } else {
+      photo = await saveFileToUploadsDir(req.file);
+    }
   }
 
   const { _id: userId } = req.user;
@@ -65,9 +74,35 @@ export const addContactController = async (req, res) => {
 };
 
 export const patchContactController = async (req, res) => {
+  const cloudinaryEnable = getEnvVar('CLOUDINARY_ENABLE') === 'true';
+  let photo;
+
   const { contactId: _id } = req.params;
   const { _id: userId } = req.user;
-  const result = await contactServices.updateContact({ _id, userId }, req.body);
+
+  const contact = await contactServices.getContactById({ _id, userId });
+
+  if (req.file) {
+    if (cloudinaryEnable && contact?.photo) {
+      const fileForDelete = contact.photo
+        .split('/')
+        .slice(-2)
+        .join('/')
+        .split('.')[0];
+      await deleteFileFromCloudinary(fileForDelete);
+    }
+
+    if (cloudinaryEnable) {
+      photo = await saveFileToCloudinary(req.file);
+    } else {
+      photo = await saveFileToUploadsDir(req.file);
+    }
+  }
+
+  const result = await contactServices.updateContact(
+    { _id, userId },
+    { ...req.body, photo },
+  );
 
   if (!result) {
     throw createHttpError(404, `Contact with id=${_id} not found`);
