@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 
-export const createDirIfNotExists = async (url) => {
+export const createDirIfNotExist = async (url) => {
   try {
     await fs.access(url);
   } catch (err) {

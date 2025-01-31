@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { CONTACT_TYPE } from '../../constans/contacts.js';
+import { CONTACT_TYPE } from '../../constants/contacts.js';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 
 const contactSchema = new Schema(
@@ -29,6 +29,9 @@ const contactSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'users',
       required: true,
+    },
+    photo: {
+      type: String,
     },
   },
   {

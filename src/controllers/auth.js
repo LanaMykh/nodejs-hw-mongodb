@@ -1,4 +1,4 @@
-import { REFRESH_TOKEN_LT } from '../constans/user.js';
+import { REFRESH_TOKEN_LT } from '../constants/user.js';
 import * as authServices from '../services/auth.js';
 
 const setupSession = (res, session) => {

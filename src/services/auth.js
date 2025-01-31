@@ -8,8 +8,8 @@ import fs from 'node:fs/promises';
 
 import UserCollection from '../db/models/user.js';
 import SessionCollection from '../db/models/session.js';
-import { ACCESS_TOKEN_LT, REFRESH_TOKEN_LT } from '../constans/user.js';
-import { SMTP, TEMPLATES_DIR } from '../constans/index.js';
+import { ACCESS_TOKEN_LT, REFRESH_TOKEN_LT } from '../constants/user.js';
+import { SMTP, TEMPLATES_DIR } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendEmail } from '../utils/sendMail.js';
 

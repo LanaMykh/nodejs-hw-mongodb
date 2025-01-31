@@ -1,4 +1,4 @@
-import { CONTACT_TYPE } from '../constans/contacts.js';
+import { CONTACT_TYPE } from '../constants/contacts.js';
 
 const parseContactType = (string) => {
   if (typeof string !== 'string') return;

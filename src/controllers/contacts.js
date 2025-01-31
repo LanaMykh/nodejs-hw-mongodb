@@ -5,6 +5,7 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { sortByList } from '../db/models/contacts.js';
+import { saveFileToUploadsDir } from '../utils/saveFileToUploadsDir.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -44,8 +45,17 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
+  let photo;
+  if (req.file) {
+    photo = await saveFileToUploadsDir(req.file);
+  }
+
   const { _id: userId } = req.user;
-  const newContact = await contactServices.addContact({ ...req.body, userId });
+  const newContact = await contactServices.addContact({
+    ...req.body,
+    photo,
+    userId,
+  });
 
   res.json({
     status: 201,
